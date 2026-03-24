@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-adv-1bigcontainer
+  labels:
+    app: cloud-adv-1bigcontainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-adv-1bigcontainer
+  template:
+    metadata:
+      labels:
+        app: cloud-adv-1bigcontainer
+    spec:
+      containers:
+      - name: master
+        image: agnesevalentini/cloud-advanced-exam:v2.0.0
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "4"
+        ports:
+        - containerPort: 22
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_CHROOT
+            - SETUID
+            - SETGID
+            - NET_ADMIN
+          runAsUser: 0
+        env:
+          - name: TARGET_PORT
+            value: "2222"
+          - name: SSH_PORT
+            value: "22"
+      

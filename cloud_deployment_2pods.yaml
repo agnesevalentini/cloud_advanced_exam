@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-adv-2pods
+  labels:
+    app: cloud-adv-2pods
+spec:
+  replicas: 2  # 2 pods with 1 containers each
+  selector:
+    matchLabels:
+      app: cloud-adv-2pods
+  template:
+    metadata:
+      labels:
+        app: cloud-adv-2pods
+    spec:
+      #nodeSelector: 
+      #  kubernetes.io/hostname: hp-laptop # used to test 2 pods with 1 container each on host only
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: cloud-adv-2pods
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: master
+        image: agnesevalentini/cloud-advanced-exam:v2.0.0
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        ports:
+        - containerPort: 22
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_CHROOT
+            - SETUID
+            - SETGID
+          runAsUser: 0
+        env:
+        - name: SSH_PORT
+          value: "22"
+        - name: TARGET_PORT
+          value: "22"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP

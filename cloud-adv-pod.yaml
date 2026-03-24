@@ -1,0 +1,19 @@
+# 1 pod with 2 containers
+# 2 pod with 1 container each
+# 2 pods with 1 container each in 2 different namespaces (with service)
+# 2 pods with 1 container each in 2 different namespaces and we need to be sure that they're on two different nodes
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cloud-adv-pod
+spec:
+  containers:
+  - name: master
+    image: agnesevalentini/cloud-advanced-exam:v1.0.0
+    ports:
+    - containerPort: 80
+  - name: node1
+    image: agnesevalentini/cloud-advanced-exam:v1.0.0
+    ports:
+    - containerPort: 81

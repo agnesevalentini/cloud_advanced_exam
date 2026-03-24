@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: master
+spec:
+  selector:
+    service.name: cloud-adv
+  ports:
+    - protocol: TCP
+      port: 22
+      targetPort: 2222

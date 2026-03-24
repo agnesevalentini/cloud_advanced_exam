@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-adv
+  labels:
+    app: cloud-adv
+    service.name: cloud-adv
+spec:
+  replicas: 1  # 1 pod 2 containers
+  selector:
+    matchLabels:
+      app: cloud-adv
+      service.name: cloud-adv
+  template:
+    metadata:
+      labels:
+        app: cloud-adv
+        service.name: cloud-adv
+    spec:
+      containers:
+      - name: node
+        image: agnesevalentini/cloud-advanced-exam:v2.0.0
+        imagePullPolicy: Always # added to allow the image to be pulled even if it is already present
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        ports:
+        - containerPort: 22
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_CHROOT
+            - SETUID
+            - SETGID
+            - NET_ADMIN
+          runAsUser: 0
+        env:
+          - name: TARGET_PORT
+            value: "2222"
+          - name: SSH_PORT
+            value: "22"
+      - name: master
+        image: agnesevalentini/cloud-advanced-exam:v2.0.0
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        ports:
+        - containerPort: 2222
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_CHROOT
+            - SETUID
+            - SETGID
+          runAsUser: 0
+        env:
+        - name: SSH_PORT
+          value: "2222"
+        - name: TARGET_PORT
+          value: "22"
